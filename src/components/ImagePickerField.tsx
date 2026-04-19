@@ -13,13 +13,13 @@ export function ImagePickerField({ label, value, onChange }: ImagePickerFieldPro
   const theme = useTheme();
 
   const pick = async () => {
-    const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    const perm = await ImagePicker.requestCameraPermissionsAsync();
     if (!perm.granted) {
-      Alert.alert('権限が必要です', '写真ライブラリへのアクセスを許可してください。');
+      Alert.alert('権限が必要です', 'カメラへのアクセスを許可してください。');
       return;
     }
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    const result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ['images'],
       quality: 0.8,
       allowsEditing: true,
       aspect: [4, 5],
@@ -38,7 +38,7 @@ export function ImagePickerField({ label, value, onChange }: ImagePickerFieldPro
       ) : null}
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel={value ? '写真を変更' : '写真を追加'}
+        accessibilityLabel={value ? '写真を撮り直す' : '写真を撮影'}
         onPress={pick}
         style={({ pressed }) => ({
           borderRadius: theme.radius.xl,
@@ -82,7 +82,7 @@ export function ImagePickerField({ label, value, onChange }: ImagePickerFieldPro
               +
             </Text>
             <Text variant="bodyMd" color="muted">
-              タップして写真を追加
+              タップして写真を撮影
             </Text>
           </View>
         )}
