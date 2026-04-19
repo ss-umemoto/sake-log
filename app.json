@@ -17,12 +17,16 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.umemoto.sakelog",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FDF8F2"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -35,6 +39,13 @@
           "cameraPermission": "カメラへのアクセスを許可すると、その場で撮影して記録に添付できます。"
         }
       ]
-    ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "2f0eee91-94d6-486f-9013-5fd552de7270"
+      }
+    },
+    "owner": "hijiri.umemoto"
   }
 }

@@ -92,7 +92,12 @@ export default function RecordListScreen() {
                   />
                 )}
                 <View style={{ flex: 1 }}>
-                  <Text variant="titleMd">{item.date}</Text>
+                  <Text variant="titleMd" numberOfLines={1}>
+                    {item.name || '銘柄未設定'}
+                  </Text>
+                  <Text variant="labelMd" color="muted">
+                    {item.date}
+                  </Text>
                   <View style={{ marginVertical: theme.spacing.xs }}>
                     <Rating value={item.rating} size={16} />
                   </View>

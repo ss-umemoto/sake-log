@@ -6,6 +6,7 @@ const IMAGE_DIR_NAME = 'sake-images';
 
 export type SakeRecord = {
   id: string;
+  name: string;
   imageUri: string | null;
   rating: number;
   date: string;
@@ -52,8 +53,10 @@ export async function listRecords(): Promise<SakeRecord[]> {
   const raw = await AsyncStorage.getItem(STORAGE_KEY);
   if (!raw) return [];
   try {
-    const parsed = JSON.parse(raw) as SakeRecord[];
-    return parsed.sort((a, b) => b.createdAt - a.createdAt);
+    const parsed = JSON.parse(raw) as Partial<SakeRecord>[];
+    return parsed
+      .map((r) => ({ name: '', ...r }) as SakeRecord)
+      .sort((a, b) => b.createdAt - a.createdAt);
   } catch {
     return [];
   }
@@ -64,6 +67,7 @@ export async function saveRecord(input: NewSakeRecord): Promise<SakeRecord> {
   const imageUri = input.imageUri ? persistImage(input.imageUri, id) : null;
   const record: SakeRecord = {
     id,
+    name: input.name,
     imageUri,
     rating: input.rating,
     date: input.date,

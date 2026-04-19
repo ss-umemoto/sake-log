@@ -107,9 +107,16 @@ export default function RecordDetailScreen() {
           <Stack gap="md">
             <Stack gap="xs">
               <Text variant="labelMd" color="secondary">
+                銘柄
+              </Text>
+              <Text variant="displayMd">{record.name || '銘柄未設定'}</Text>
+            </Stack>
+
+            <Stack gap="xs">
+              <Text variant="labelMd" color="secondary">
                 飲んだ日
               </Text>
-              <Text variant="displayMd">{record.date}</Text>
+              <Text variant="titleMd">{record.date}</Text>
             </Stack>
 
             <Stack gap="xs">

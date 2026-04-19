@@ -11,6 +11,7 @@ import {
   Text,
 } from '../../src/components';
 import { useTheme } from '../../src/theme/ThemeProvider';
+import { recognizeJapaneseText } from '../../src/lib/ocr';
 import { saveRecord } from '../../src/lib/records';
 
 function todayYMD() {
@@ -26,14 +27,33 @@ export default function NewRecordScreen() {
   const theme = useTheme();
   const router = useRouter();
   const [imageUri, setImageUri] = useState<string | null>(null);
+  const [name, setName] = useState('');
   const [rating, setRating] = useState(0);
   const [date, setDate] = useState(todayYMD());
   const [memo, setMemo] = useState('');
   const [dateError, setDateError] = useState<string | undefined>();
   const [saving, setSaving] = useState(false);
+  const [ocring, setOcring] = useState(false);
+
+  const handleImageChange = async (uri: string | null) => {
+    setImageUri(uri);
+    if (!uri) return;
+    setOcring(true);
+    try {
+      const text = await recognizeJapaneseText(uri);
+      if (text) {
+        setMemo((prev) => (prev ? `${prev}\n\n${text}` : text));
+      }
+    } catch {
+      // OCR 失敗時は黙って無視（ユーザーは手入力できる）
+    } finally {
+      setOcring(false);
+    }
+  };
 
   const resetForm = () => {
     setImageUri(null);
+    setName('');
     setRating(0);
     setDate(todayYMD());
     setMemo('');
@@ -48,7 +68,7 @@ export default function NewRecordScreen() {
     setDateError(undefined);
     setSaving(true);
     try {
-      await saveRecord({ imageUri, rating, date, memo });
+      await saveRecord({ imageUri, name, rating, date, memo });
       resetForm();
       router.navigate('/');
     } catch (e) {
@@ -77,7 +97,14 @@ export default function NewRecordScreen() {
               </Text>
             </Stack>
 
-            <ImagePickerField label="写真" value={imageUri} onChange={setImageUri} />
+            <ImagePickerField label="写真" value={imageUri} onChange={handleImageChange} />
+
+            <Input
+              label="銘柄"
+              placeholder="例: 獺祭 純米大吟醸"
+              value={name}
+              onChangeText={setName}
+            />
 
             <Stack gap="sm">
               <Text variant="labelMd" color="secondary">
@@ -102,13 +129,20 @@ export default function NewRecordScreen() {
               autoCapitalize="none"
             />
 
-            <Input
-              label="メモ"
-              placeholder="香り、口当たり、合わせた料理など"
-              value={memo}
-              onChangeText={setMemo}
-              multiline
-            />
+            <Stack gap="xs">
+              <Input
+                label="メモ"
+                placeholder="香り、口当たり、合わせた料理など"
+                value={memo}
+                onChangeText={setMemo}
+                multiline
+              />
+              {ocring ? (
+                <Text variant="labelMd" color="muted">
+                  ラベルを読み取り中…
+                </Text>
+              ) : null}
+            </Stack>
 
             <Button
               label="保存"
